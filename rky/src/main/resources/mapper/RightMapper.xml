@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.school.mapper.RightMapper">
+	<select id="dyGetList" parameterType="com.example.school.dto.LoginDTO" resultType="com.example.school.vo.LoginVO">
+		SELECT t_u.username,t_u.tu_id
+		FROM t_u
+		<where>
+			<if test="loginDTO.username != '' and loginDTO.username !=  null">
+				username = #{loginDTO.username}
+			</if>
+			<if test="loginDTO.password != '' and loginDTO.password !=  null">
+				AND
+				password = #{loginDTO.password}
+			</if>
+		</where>
+	</select>
+
+    <select id="byGetRightList" parameterType="int" resultType="com.example.school.domain.Right">
+		SELECT DISTINCT t_right.right_name,t_right.url,t_right.tr_id
+		FROM t_right
+		RIGHT JOIN t_role_right ON t_right.tr_id = t_role_right.right_tr_id
+		Right JOIN t_tu_role ON t_role_right.role_tr_id = t_tu_role.role_tr_id
+		WHERE  t_tu_role.u_tu_id= 1 = #{tuId}
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.school.mapper.TypeMapper">
+
+    <select id="dyGetTypeList" parameterType="com.example.school.dto.TypeSelectDTO" resultType="com.example.school.vo.TypeVO">
+        SELECT t_type.type_name,t_type.create_time,t_type.remark,COUNT(t_user.type_id = t_type.id) number
+        FROM t_type
+        JOIN t_user ON t_user.type_id = t_type.id
+        <where>
+            <if test="typeSelectDTO.typeName != '' and typeSelectDTO.typeName !=  null">
+                AND
+                type_name LIKE CONCAT('%', CONCAT(#{typeSelectDTO.typeName}, '%'))
+            </if>
+
+            <if test="typeSelectDTO.airTime !=  null">
+                AND
+                t_type.create_time &gt;= #{typeSelectDTO.airTime}
+            </if>
+
+            <if test="typeSelectDTO.stopTime !=  null">
+                AND
+                t_type.create_time &lt;= #{typeSelectDTO.stopTime}
+            </if>
+        </where>
+        GROUP BY type_id
+    </select>
+
+</mapper>

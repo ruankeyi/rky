@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.school.mapper.AccessMapper">
+
+    <select id="dyGetAccessList" parameterType="com.example.school.dto.AccessSelectDTO" resultType="com.example.school.vo.AccessVO">
+        SELECT t_access.id,t_user.name,t_user.card,t_user.phone,t_type.type_name,t_qr.remark,t_qr.pip,t_qr.ctype,t_access.scan_code_time
+        FROM t_access
+        JOIN t_qr ON t_qr.id = t_access.qr_id
+        JOIN t_user ON t_user.id = t_access.user_id
+        JOIN t_type ON t_user.type_id = t_type.id
+        <where>
+            <if test="accessSelectDTO.name != '' and accessSelectDTO.name !=  null">
+                name LIKE CONCAT('%', CONCAT(#{accessSelectDTO.name}, '%'))
+            </if>
+
+            <if test="accessSelectDTO.card != '' and accessSelectDTO.card !=  null">
+                AND
+                card = #{accessSelectDTO.card}
+            </if>
+
+            <if test="accessSelectDTO.typeId !=  null">
+                AND
+                type_id = #{accessSelectDTO.typeId}
+            </if>
+
+            <if test="accessSelectDTO.pip != '' and accessSelectDTO.pip !=  null">
+                AND
+                pip = #{accessSelectDTO.pip}
+            </if>
+
+            <if test="accessSelectDTO.ctype != '' and accessSelectDTO.ctype !=  null">
+                AND
+                ctype = #{accessSelectDTO.ctype}
+            </if>
+
+            <if test="accessSelectDTO.airTime !=  null">
+                AND
+                scan_code_time &gt;= #{accessSelectDTO.airTime}
+            </if>
+
+            <if test="accessSelectDTO.stopTime !=  null">
+                AND
+                scan_code_time &lt;= #{accessSelectDTO.stopTime}
+            </if>
+        </where>
+    </select>
+</mapper>

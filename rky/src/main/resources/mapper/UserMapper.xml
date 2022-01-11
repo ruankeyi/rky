@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.school.mapper.UserMapper">
+
+    <select id="dyGetUserList" parameterType="com.example.school.dto.UserSelectDTO" resultType="com.example.school.vo.UserVO">
+        SELECT t_user.id,t_user.name,t_user.card,t_user.phone,t_user.create_time,t_user.expiry,t_user.state,t_user.info,t_user.type_id,t_type.type_name
+        FROM t_user
+        JOIN t_type ON t_user.type_id = t_type.id
+        <where>
+            <if test="userSelectDTO.name != '' and userSelectDTO.name !=  null">
+                AND
+                name LIKE CONCAT('%', CONCAT(#{userSelectDTO.name}, '%'))
+            </if>
+
+            <if test="userSelectDTO.card != '' and userSelectDTO.card !=  null">
+                AND
+                card = #{userSelectDTO.card}
+            </if>
+
+            <if test="userSelectDTO.typeId !=  null">
+                AND
+                type_id = #{userSelectDTO.typeId}
+            </if>
+
+            <if test="userSelectDTO.state !=  null">
+                AND
+                state = #{userSelectDTO.state}
+            </if>
+
+            <if test="userSelectDTO.airTime !=  null">
+                AND
+                t_user.create_time &gt;= #{userSelectDTO.airTime}
+            </if>
+
+            <if test="userSelectDTO.stopTime !=  null">
+                AND
+                t_user.create_time &lt;= #{userSelectDTO.stopTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="dyGetHoursList" parameterType="com.example.school.dto.HoursDTO" resultType="com.example.school.vo.HoursVO">
+        SELECT DISTINCT FLOOR( HOUR (t_access.scan_code_time) / 2 ) *2 PeriodTime ,
+        SUM(t_qr.id = 2)OutStand1,
+        SUM(t_qr.id = 3)IntStand1,
+        SUM(t_qr.id = 4)OutStand2,
+        SUM(t_qr.id = 5)IntStand2
+        FROM t_access
+        LEFT JOIN t_qr ON t_qr.id = t_access.qr_id
+        <where>
+            <if test="hoursDTO.airTime !=  null">
+                AND
+                t_access.scan_code_time &gt;= #{hoursDTO.airTime}
+            </if>
+
+            <if test="hoursDTO.stopTime !=  null">
+                AND
+                t_access.scan_code_time &lt;= #{hoursDTO.stopTime}
+            </if>
+        </where>
+        GROUP BY  FLOOR( HOUR (t_access.scan_code_time) / 2 ) *2
+    </select>
+
+
+    <select id="dyGetRoleList" parameterType="com.example.school.dto.HoursDTO" resultType="com.example.school.vo.RoleVO">
+        SELECT DISTINCT t_type.type_name,
+        SUM(t_qr.id = 2)OutStand1,
+        SUM(t_qr.id = 3)IntStand1,
+        SUM(t_qr.id = 4)OutStand2,
+        SUM(t_qr.id = 5)IntStand2
+        FROM t_access
+        LEFT JOIN t_qr ON t_qr.id = t_access.qr_id
+        LEFT JOIN t_user ON t_access.user_id = t_user.id
+        LEFT JOIN t_type ON t_type.id = t_user.type_id
+        <where>
+               <if test="hoursDTO.airTime !=  null">
+                   AND
+                   t_access.scan_code_time &gt;= #{hoursDTO.airTime}
+               </if>
+
+               <if test="hoursDTO.stopTime !=  null">
+                   AND
+                   t_access.scan_code_time &lt;= #{hoursDTO.stopTime}
+               </if>
+        </where>
+        GROUP BY t_type.type_name
+    </select>
+
+
+    <select id="dyGetMonthList" parameterType="com.example.school.dto.MonthDTO" resultType="com.example.school.vo.MonthVO">
+        SELECT MONTH(t_access.scan_code_time) MonthTime,
+        SUM(t_type.id = 1) teach,
+        SUM(t_type.id = 2) student,
+        SUM(t_type.id = 4) visit,
+        COUNT(t_type.id = 1) headcount
+        FROM t_access
+        LEFT JOIN t_qr ON t_qr.id = t_access.qr_id
+        LEFT JOIN t_user ON t_access.user_id = t_user.id
+        LEFT JOIN t_type ON t_type.id = t_user.type_id
+                <where>
+                        <if test="monthDTO.id !=  null">
+                            t_access.qr_id = #{monthDTO.id}
+                        </if>
+                </where>
+        GROUP BY MONTH(t_access.scan_code_time)
+    </select>
+
+    <select id="dyGetNumberList" parameterType="int" resultType="com.example.school.vo.NumberVO">
+		SELECT DISTINCT
+		SUM(t_user.type_id = 1 OR t_user.type_id = 2) number1 ,
+        (SELECT COUNT(t_access.id)
+		FROM t_access) number2 ,
+		SUM(t_user.type_id = 1 AND state = 1) number3 ,
+		SUM(t_user.type_id = 2 AND state = 1) number4
+		FROM t_user
+    </select>
+</mapper>
