@@ -15,13 +15,17 @@ http://www.springframework.org/schema/security/spring-security.xsd">
         <!-- auto-config配置后，不需要在配置下面信息 <security:form-login /> 定义登录表单信息
         <security:http-basic
         /> <security:logout /> -->
+
+        <!-- 关闭CSRF,默认是开启的 -->
+        <security:csrf disabled="true" />
+
     </security:http>
     <security:authentication-manager>
         <security:authentication-provider>
             <security:user-service>
                 <security:user name="user" password="{noop}user"
                                authorities="ROLE_USER" />
-                <security:user name="admin" password="{noop}admin"
+                <security:user name="asdf" password="{noop}111"
                                authorities="ROLE_ADMIN" />
             </security:user-service>
         </security:authentication-provider>

@@ -24,4 +24,20 @@
 		Right JOIN t_tu_role ON t_role_right.role_tr_id = t_tu_role.role_tr_id
 		WHERE  t_tu_role.u_tu_id= 1 = #{tuId}
     </select>
+
+	<select id="dyGetusername" parameterType="String" resultType="com.example.school.domain.Admin">
+		SELECT t_u.username,t_u.tu_id,t_u.password
+		FROM t_u
+        WHERE t_u.username = #{username}
+	</select>
+
+
+	<select id="byGetRoleList" parameterType="int" resultType="com.example.school.domain.Role">
+		SELECT t_role.role_name
+		FROM t_u
+		JOIN t_tu_role ON t_u.tu_id = t_tu_role.u_tu_id
+		JOIN t_role ON t_tu_role.role_tr_id = t_role.tr_id
+		WHERE t_u.tu_id = #{tuId}
+	</select>
+
 </mapper>
