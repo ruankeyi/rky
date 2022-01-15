@@ -90,11 +90,16 @@
 
 
     <select id="dyGetMonthList" parameterType="com.example.school.dto.MonthDTO" resultType="com.example.school.vo.MonthVO">
-        SELECT MONTH(t_access.scan_code_time) MonthTime,
-        SUM(t_type.id = 1) teach,
-        SUM(t_type.id = 2) student,
-        SUM(t_type.id = 4) visit,
-        COUNT(t_type.id = 1) headcount
+        select m.id MonthTime, IFNULL(b,0) teach ,IFNULL(c,0) student,IFNULL(d,0) visit,IFNULL(e,0) headcount
+        FROM
+        (select 1 as id union select 2 union select 3 union select 4 union select 5 union select 6
+        union select 7 union select 8 union select 9 union select 10 union select 11 union select 12) m
+        LEFT JOIN
+        (SELECT month(t_access.scan_code_time) a,
+        SUM(t_type.id = 1) b,
+        SUM(t_type.id = 2) c,
+        SUM(t_type.id = 4) d,
+        COUNT(t_type.id) e
         FROM t_access
         LEFT JOIN t_qr ON t_qr.id = t_access.qr_id
         LEFT JOIN t_user ON t_access.user_id = t_user.id
@@ -104,7 +109,7 @@
                             t_access.qr_id = #{monthDTO.id}
                         </if>
                 </where>
-        GROUP BY MONTH(t_access.scan_code_time)
+        GROUP BY month(t_access.scan_code_time)) n ON m.id = n.a
     </select>
 
     <select id="dyGetNumberList" parameterType="int" resultType="com.example.school.vo.NumberVO">
