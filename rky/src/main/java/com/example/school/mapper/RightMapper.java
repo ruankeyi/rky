@@ -9,6 +9,7 @@ import com.example.school.domain.Type;
 import com.example.school.dto.LoginDTO;
 import com.example.school.dto.TypeSelectDTO;
 import com.example.school.vo.LoginVO;
+import com.example.school.vo.RightVO;
 import com.example.school.vo.TypeVO;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +26,5 @@ public interface RightMapper extends BaseMapper<Right> {
     List<Role> byGetRoleList(Integer tuId);
     Page<LoginVO> dyGetList(Page<LoginVO> page,LoginDTO loginDTO);
     List<Right> byGetRightList(Integer tuId);
+    List<Right> byGetRoles();
 }

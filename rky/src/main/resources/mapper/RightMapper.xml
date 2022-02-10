@@ -3,26 +3,40 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.school.mapper.RightMapper">
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.example.school.domain.Right">
+		<id column="id" property="id" />
+		<result column="url" property="url" />
+		<result column="right_name" property="rightName" />
+		<result column="state" property="state" />
+		<result column="info" property="info" />
+	</resultMap>
+
+	<resultMap id="Roles" type="com.example.school.domain.Right" extends="BaseResultMap">
+		<collection property="roles" ofType="com.example.school.domain.Role">
+			<id column="id" property="trId" />
+			<result column="role_name" property="roleName" />
+			<result column="role_desc" property="roleDesc" />
+			<result column="state" property="state" />
+		</collection>
+	</resultMap>
+
 	<select id="dyGetList" parameterType="com.example.school.dto.LoginDTO" resultType="com.example.school.vo.LoginVO">
 		SELECT t_u.username,t_u.tu_id
 		FROM t_u
 		<where>
 			<if test="loginDTO.username != '' and loginDTO.username !=  null">
-				username = #{loginDTO.username}
-			</if>
-			<if test="loginDTO.password != '' and loginDTO.password !=  null">
-				AND
-				password = #{loginDTO.password}
+				username LIKE CONCAT('%', CONCAT(#{loginDTO.username}, '%'))
 			</if>
 		</where>
 	</select>
 
     <select id="byGetRightList" parameterType="int" resultType="com.example.school.domain.Right">
-		SELECT DISTINCT t_right.right_name,t_right.url,t_right.tr_id
+		SELECT DISTINCT t_right.right_name,t_right.url,t_right.id
 		FROM t_right
-		RIGHT JOIN t_role_right ON t_right.tr_id = t_role_right.right_tr_id
+		RIGHT JOIN t_role_right ON t_right.id = t_role_right.right_id
 		Right JOIN t_tu_role ON t_role_right.role_tr_id = t_tu_role.role_tr_id
-		WHERE  t_tu_role.u_tu_id= 1 = #{tuId}
+		WHERE  t_tu_role.u_tu_id = #{tuId}
     </select>
 
 	<select id="dyGetusername" parameterType="String" resultType="com.example.school.domain.Admin">
@@ -33,11 +47,18 @@
 
 
 	<select id="byGetRoleList" parameterType="int" resultType="com.example.school.domain.Role">
-		SELECT t_role.role_name
+		SELECT DISTINCT t_role.role_name,t_role.tr_id,t_role.state,t_role.role_desc
 		FROM t_u
 		JOIN t_tu_role ON t_u.tu_id = t_tu_role.u_tu_id
 		JOIN t_role ON t_tu_role.role_tr_id = t_role.tr_id
 		WHERE t_u.tu_id = #{tuId}
 	</select>
 
+
+	<select id="byGetRoles"  resultMap="Roles">
+		SELECT DISTINCT t_right.right_name,t_right.url,t_right.id,t_role.role_name,t_role.tr_id
+		FROM t_right
+		RIGHT JOIN t_role_right ON t_right.id = t_role_right.right_id
+	    RIGHT JOIN t_role ON t_role.tr_id = t_role_right.role_tr_id
+	</select>
 </mapper>

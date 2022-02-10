@@ -35,5 +35,5 @@ public class RoleRight {
      */
     @NotNull(message = "权限Id不为空")
     @ApiModelProperty(value = "权限id", required = true)
-    private Integer rightTrId;
+    private Integer rightId;
 }

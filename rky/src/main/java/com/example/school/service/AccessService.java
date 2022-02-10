@@ -8,6 +8,8 @@ import com.example.school.dto.UserSelectDTO;
 import com.example.school.vo.AccessVO;
 import com.example.school.vo.UserVO;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  *
  */
@@ -24,5 +26,5 @@ public interface AccessService extends IService<Access> {
      * 出入记录导出
      * @param accessSelectDTO
      */
-    void excelWriter(AccessSelectDTO accessSelectDTO);
+    void excelWriter(HttpServletResponse response, AccessSelectDTO accessSelectDTO);
 }

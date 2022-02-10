@@ -6,13 +6,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.school.Result;
 import com.example.school.domain.User;
 import com.example.school.dto.*;
+import com.example.school.exception.CommonException;
 import com.example.school.service.UserService;
 import com.example.school.utils.GetOpenIdUtil;
 import com.example.school.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,13 +35,14 @@ import java.util.List;
 @Api(tags = "人员信息模块操作api")
 @RestController
 @RequestMapping("/user")
+@EnableScheduling
 public class UserController {
     @Autowired
     private UserService userService;
 
     @ApiOperation(value = "教职工学生登陆接口")
     @GetMapping(value = "/userLogin")
-    public Result<UserloginVO> login(UserLoginDTO userLoginDTO)
+    public Result<UserloginVO> login(@Validated UserLoginDTO userLoginDTO)
     {
         UserloginVO login = userService.login(userLoginDTO);
         return Result.ok(login);
@@ -46,7 +50,7 @@ public class UserController {
 
     @ApiOperation(value = "访客登陆接口")
     @GetMapping(value = "/visitorsLogin")
-    public Result<VisitorsLoginVO> login(VisitorsLoginDTO visitorsLoginDTO)
+    public Result<VisitorsLoginVO> login(@Validated VisitorsLoginDTO visitorsLoginDTO)
     {
         VisitorsLoginVO login = userService.login(visitorsLoginDTO);
         return Result.ok(login);
@@ -62,7 +66,7 @@ public class UserController {
 
     @ApiOperation(value = "人员信息添加接口")
     @PostMapping(value = "/addUser")
-    public Result<Integer> insert(@RequestBody @Validated UserDTO userDTO){
+    public Result<?> insert(@RequestBody @Validated UserDTO userDTO){
         return Result.ok(userService.insert(userDTO));
     }
 
@@ -93,7 +97,7 @@ public class UserController {
 
     @ApiOperation(value = "人员信息批量导入")
     @PostMapping("/batchImport")
-    public Result<?> insertUsers(@RequestParam("file") MultipartFile file){
+    public Result<?> insertUsers(@RequestPart @RequestParam("file") MultipartFile file){
         try {
             ExcelReader excelReader = new ExcelReader(file.getInputStream(), 0);
             //直接把Excel中的内容映射到实体类中
@@ -104,7 +108,7 @@ public class UserController {
             return Result.ok(i);
         } catch ( IOException e) {
             e.printStackTrace();
-            return Result.ok("失败");
+            throw new CommonException("导入失败");
         }
     }
 

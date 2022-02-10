@@ -45,5 +45,6 @@
                 scan_code_time &lt;= #{accessSelectDTO.stopTime}
             </if>
         </where>
+
     </select>
 </mapper>

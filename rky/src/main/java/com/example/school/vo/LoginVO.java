@@ -20,7 +20,7 @@ import java.util.List;
 @Data
 public class LoginVO {
     /**
-     *
+     *后台用户id
      */
     @ApiModelProperty(value = "后台用户id", required = true)
     private Integer tuId;
@@ -31,7 +31,15 @@ public class LoginVO {
     @ApiModelProperty(value = "用户名", required = true)
     private String username;
 
+    /**
+     * 角色信息
+     */
+    @ApiModelProperty(value = "角色信息")
+    private List<Role> roleList;
 
+    /**
+     * 权限信息
+     */
     @ApiModelProperty(value = "权限信息")
     private List<Right> rightList;
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @Author: ruankeyi
@@ -15,14 +16,20 @@ public class LoginDTO {
     /**
      * 用户名
      */
-    @NotBlank(message = "用户名不为空")
-    @ApiModelProperty(value = "用户名", required = true)
+    @ApiModelProperty(value = "用户名")
     private String username;
 
     /**
-     * 密码
+     * 页码
      */
-    @NotBlank(message = "密码不为空")
-    @ApiModelProperty(value = "密码", required = true)
-    private String password;
+    @NotNull(message = "页码不为空")
+    @ApiModelProperty(value = "页码", required = true)
+    Integer pageSize;
+
+    /**
+     * 条数
+     */
+    @NotNull(message = "条数不为空")
+    @ApiModelProperty(value = "条数", required = true)
+    Integer pageNumber;
 }

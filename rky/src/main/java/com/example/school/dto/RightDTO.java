@@ -1,31 +1,18 @@
-package com.example.school.domain;
+package com.example.school.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * @Author: ruankeyi
- * @Date: 2022/01/09/17:14
+ * @Date: 2022/02/07/10:21
  * @Description:
  */
-@TableName(value ="t_right")
 @Data
-public class Right {
-    /**
-     *
-     */
-    @TableId(value = "id",type = IdType.AUTO)
-    @NotNull(message = "权限Id不为空")
-    @ApiModelProperty(value = "权限id", required = true)
-    private Integer id;
-
+public class RightDTO {
     /**
      * 权限名
      */
@@ -52,11 +39,4 @@ public class Right {
      */
     @ApiModelProperty(value = "备注")
     private String info;
-
-    /**
-     * 角色名
-     */
-    @NotBlank(message = "角色名不为空")
-    @ApiModelProperty(value = "角色名", required = true)
-    private List<Role> roles;
 }

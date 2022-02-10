@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -72,6 +73,7 @@ public class VisitorsLoginDTO {
     /**
      * 二次扫码校验id
      */
-    @ApiModelProperty(value = "二次扫码校验id")
+    @NotNull(message = "二次扫码校验id不为空")
+    @ApiModelProperty(value = "二次扫码校验id", required = true)
     private Integer openId;
 }

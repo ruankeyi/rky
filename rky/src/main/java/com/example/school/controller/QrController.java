@@ -34,7 +34,7 @@ public class QrController {
 
     @ApiOperation(value = "出入配置添加接口")
     @PostMapping(value = "/addQr")
-    public Result<Integer> insert(@RequestBody @Validated QrDTO qrDTO){
+    public Result<?> insert(@RequestBody @Validated QrDTO qrDTO){
         return Result.ok(qrService.insert(qrDTO));
     }
 

@@ -32,7 +32,7 @@ public class TypeController {
 
     @ApiOperation(value = "人员类型添加接口")
     @PostMapping(value = "/addType")
-    public Result<Integer> insert(@RequestBody @Validated TypeDTO typeDTO){
+    public Result<?> insert(@RequestBody @Validated TypeDTO typeDTO){
         return Result.ok(typeService.insert(typeDTO));
     }
 

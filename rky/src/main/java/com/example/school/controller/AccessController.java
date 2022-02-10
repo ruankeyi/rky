@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @Author: ruankeyi
  * @Date: 2021/12/10/14:36
@@ -32,8 +34,8 @@ public class AccessController {
     }
 
     @ApiOperation(value = "出入记录导出")
-    @PostMapping("/exportInfo")
-    public void excelWriter(@RequestBody @Validated AccessSelectDTO accessSelectDTO){
-       accessService.excelWriter(accessSelectDTO);
+    @GetMapping("/exportInfo")
+    public void excelWriter(HttpServletResponse response,AccessSelectDTO accessSelectDTO){
+       accessService.excelWriter(response,accessSelectDTO);
     }
 }

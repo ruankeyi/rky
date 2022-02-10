@@ -1,31 +1,20 @@
-package com.example.school.domain;
+package com.example.school.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 /**
  * @Author: ruankeyi
- * @Date: 2022/01/09/17:02
+ * @Date: 2022/01/23/20:40
  * @Description:
  */
-@TableName(value ="t_u")
 @Data
-public class Admin {
-    /**
-     *
-     */
-    @TableId(value = "tu_id",type = IdType.AUTO)
-    @NotNull(message = "后台用户Id不为空")
-    @ApiModelProperty(value = "后台用户id", required = true)
-    private Integer tuId;
-
+public class AdminDTO {
     /**
      * 用户名
      */
@@ -67,4 +56,7 @@ public class Admin {
      */
     @ApiModelProperty(value = "备注")
     private String info;
+
+    @ApiModelProperty(value = "角色id信息")
+    private List<Integer> integerList;
 }

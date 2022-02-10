@@ -1,30 +1,19 @@
-package com.example.school.domain;
+package com.example.school.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @Author: ruankeyi
- * @Date: 2022/01/09/17:06
+ * @Date: 2022/02/07/9:14
  * @Description:
  */
-@TableName(value ="t_role")
 @Data
-public class Role {
-    /**
-     *
-     */
-    @TableId(value = "tr_id",type = IdType.AUTO)
-    @NotNull(message = "角色Id不为空")
-    @ApiModelProperty(value = "角色id", required = true)
-    private Integer trId;
-
+public class RoleDTO {
     /**
      * 角色名
      */
@@ -35,7 +24,6 @@ public class Role {
     /**
      * 角色描述
      */
-    @NotBlank(message = "角色描述不为空")
     @ApiModelProperty(value = "角色描述", required = true)
     private String roleDesc;
 
@@ -45,4 +33,10 @@ public class Role {
     @NotNull(message = "状态 1:启用  0:禁用")
     @ApiModelProperty(value = "状态 1:启用  0:禁用", required = true)
     private Integer state;
+
+    /**
+     * 权限id集合
+     */
+    @ApiModelProperty(value = "权限id信息")
+    private List<Integer> integerList;
 }

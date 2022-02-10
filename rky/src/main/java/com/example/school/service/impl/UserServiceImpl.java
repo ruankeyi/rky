@@ -1,12 +1,14 @@
 package com.example.school.service.impl;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.school.Result;
 import com.example.school.domain.Access;
 import com.example.school.domain.Qr;
 import com.example.school.domain.User;
@@ -19,13 +21,18 @@ import com.example.school.service.UserService;
 import com.example.school.mapper.UserMapper;
 import com.example.school.utils.WeChatUtil;
 import com.example.school.vo.*;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotBlank;
 import javax.xml.crypto.Data;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -43,6 +50,7 @@ import java.util.*;
  *
  */
 @Service
+@Component
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     private UserMapper userMapper;
@@ -130,6 +138,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //校验是否存在openid
         LambdaQueryWrapper<User> userLambda = new QueryWrapper<User>().lambda()
                 .eq(User::getOpenId,visitorsLoginDTO.getOpenId());
+
         Integer userCount = userMapper.selectCount(userLambda);
         if (userCount > 0) {
             User users = userMapper.selectOne(userLambda);
@@ -165,9 +174,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         VisitorsLoginVO visitorsLoginVO = new VisitorsLoginVO();
         //添加返回参数
-        visitorsLoginVO.setName(user.getName());
-        visitorsLoginVO.setCard(user.getCard());
-        visitorsLoginVO.setPhone(user.getPhone());
+        visitorsLoginVO.setName(visitorsLoginDTO.getName());
+        visitorsLoginVO.setCard(visitorsLoginDTO.getCard());
+        visitorsLoginVO.setPhone(visitorsLoginDTO.getPhone());
         visitorsLoginVO.setModifyTime(LocalDateTime.now());
         visitorsLoginVO.setVisitorsName(visitorsLoginDTO.getVisitorsName());
         visitorsLoginVO.setVisitorsCard(visitorsLoginDTO.getVisitorsCard());
@@ -313,7 +322,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Integer insertUsers(List<User> users) {
         Integer insert= 0;
         for (User user : users){
-            insert += userMapper.insert(user);
+
+            //导入校验
+            boolean matches = user.getPhone().matches("^[1][3,4,5,6,7,8,9][0-9]{9}$");
+            if (matches){
+                insert += userMapper.insert(user);
+            }else {
+                throw new CommonException("手机格式有误");
+            }
 
         }
         return insert;
@@ -371,12 +387,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 24H访客信息 定时删除
      */
+    @Scheduled(cron = "0/5 * *  * * ?")
     @Override
     public void timerRun() {
         // 一天的毫秒数
         long daySpan = 24 * 60 * 60 * 1000;
         // 规定的每天几点运行
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd 11:39:00");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd 15:33:00");
         // 首次运行时间
         try {
             Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sdf.format(new Date()));
@@ -408,7 +425,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                         if (result < 24) {
                             System.out.println("访客信息不符合");
                         } else {
-                            userMapper.deleteById(user.getId());
+                            user.setState(0);
+                            user.setOpenId(0);
+                            userMapper.updateById(user);
                         }
                     }
                 }

@@ -17,8 +17,7 @@ import java.util.Date;
  */
 @Data
 public class UserDTO {
-    @NotNull(message = "人员信息Id不为空")
-    @ApiModelProperty(value = "人员信息id", required = true)
+    @ApiModelProperty(value = "人员信息id")
     private Integer id;
 
     /**

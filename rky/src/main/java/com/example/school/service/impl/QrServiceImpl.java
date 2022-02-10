@@ -65,12 +65,12 @@ public class QrServiceImpl extends ServiceImpl<QrMapper, Qr> implements QrServic
 
 
         // 生成二维码到文件，也可以到流
-        QrCodeUtil.generate("http://hutool.cn/", config, FileUtil.file("F:/qr/qrcode.jpg"));
+        QrCodeUtil.generate("入口1", config, FileUtil.file("F:/qr/2.jpg"));
 
         Qr qr = new Qr();
         BeanUtils.copyProperties(qrDTO,qr);
         qr.setCreateTime(LocalDateTime.now());
-        qr.setPhoto("F:/qr/qrcode.jpg");
+        qr.setPhoto("F:/qr/2.jpg");
         return qrMapper.insert(qr);
     }
 
